@@ -16,7 +16,13 @@ import Usuarios from "./pages/Admin/Usuarios";
 
 function HomeRedirect() {
   const { perfil, loading } = useAuth();
-  if (loading) return null;
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-dark">
+        <div className="animate-spin h-10 w-10 border-4 border-green border-t-transparent rounded-full" />
+      </div>
+    );
+  }
   if (!perfil) return <Navigate to="/login" replace />;
   switch (perfil.rol) {
     case "mozo": return <Navigate to="/mozo/mesas" replace />;

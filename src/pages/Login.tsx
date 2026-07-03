@@ -1,11 +1,15 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { UtensilsCrossed, LogIn, UserPlus } from "lucide-react";
 
 export default function Login() {
-  const { signIn, signUp } = useAuth();
+  const { perfil, signIn, signUp } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (perfil) navigate("/", { replace: true });
+  }, [perfil, navigate]);
   const [isRegister, setIsRegister] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -24,7 +28,7 @@ export default function Login() {
         setError("Usuario creado. Revisa tu email si hay confirmación activada.");
       } else {
         await signIn(email, password);
-        navigate("/");
+        setLoading(true);
       }
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Error de autenticación");
