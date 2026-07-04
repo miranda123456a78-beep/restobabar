@@ -51,12 +51,33 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   async function signUp(email: string, password: string, nombre: string, rol: "admin" | "mozo" | "cocina") {
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: { data: { nombre, rol } },
     });
     if (error) throw error;
+
+    if (data?.user) {
+      await supabase.rpc("crear_perfil", {
+        p_user_id: data.user.id,
+        p_nombre: nombre,
+        p_rol: rol,
+      });
+
+      for (let i = 0; i < 10; i++) {
+        const { data: perfilData } = await supabase
+          .from("perfiles")
+          .select("*")
+          .eq("id", data.user.id)
+          .single();
+        if (perfilData) {
+          setPerfil(perfilData);
+          return;
+        }
+        await new Promise(r => setTimeout(r, 300));
+      }
+    }
   }
 
   async function signIn(email: string, password: string) {

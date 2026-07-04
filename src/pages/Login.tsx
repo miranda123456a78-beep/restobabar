@@ -25,7 +25,7 @@ export default function Login() {
     try {
       if (isRegister) {
         await signUp(email, password, nombre, rol);
-        setError("Usuario creado. Revisa tu email si hay confirmación activada.");
+        setError("Usuario creado correctamente");
       } else {
         await signIn(email, password);
         setLoading(true);
